@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>EXIF Photos Helper</title>
+</head>
+<body data-file-drop-target>
+
+<header id="titlebar">
+    <div class="title">EXIF Photos Helper</div>
+    <div id="folder" class="folder"></div>
+    <div class="spacer"></div>
+    <div id="toolbar" class="toolbar" hidden>
+        <div class="segmented" id="filter">
+            <button data-filter="all" class="active">All <span id="count-all"></span></button>
+            <button data-filter="nodate">No date <span id="count-nodate"></span></button>
+            <button data-filter="nogps">No location <span id="count-nogps"></span></button>
+        </div>
+        <button id="select-all" title="Add all visible photos to the basket (⌘A)">Select all</button>
+    </div>
+    <button id="open-folder" class="primary">Open folder…</button>
+</header>
+
+<div id="start" class="start">
+    <div class="dropzone">
+        <div class="dropzone-icon">📂</div>
+        <h1>Drop a photo folder here</h1>
+        <p>JPG and HEIC files directly inside the folder are loaded (subfolders are ignored).</p>
+        <button id="open-folder-2" class="primary">Choose folder…</button>
+    </div>
+</div>
+
+<div id="fatal" class="start" hidden>
+    <div class="dropzone error">
+        <div class="dropzone-icon">⚠️</div>
+        <h1>Can't start</h1>
+        <p id="fatal-msg"></p>
+    </div>
+</div>
+
+<main id="workspace" hidden>
+    <section id="grid-wrap">
+        <div id="grid" class="grid"></div>
+        <div id="grid-empty" class="grid-empty" hidden>No photos match this filter.</div>
+    </section>
+
+    <aside id="side">
+        <section class="panel">
+            <div class="panel-head">
+                <h2>Basket <span id="basket-count" class="pill">0</span></h2>
+                <button id="basket-clear" class="link">Clear</button>
+            </div>
+            <div id="basket" class="basket"></div>
+            <p id="basket-hint" class="hint">Click photos to add them. Shift-click selects a range.</p>
+        </section>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2>Date</h2>
+                <button id="date-clear" class="link">Don't change</button>
+            </div>
+            <div id="date-crumbs" class="crumbs"></div>
+            <div id="date-chips" class="chips"></div>
+            <p id="date-preview" class="preview"></p>
+        </section>
+
+        <section class="panel panel-map">
+            <div class="panel-head">
+                <h2>Location</h2>
+                <button id="loc-clear" class="link">Don't change</button>
+            </div>
+            <form id="search" class="search">
+                <input id="search-input" type="search" placeholder="Search a place…" autocomplete="off"/>
+                <ul id="search-results" class="search-results" hidden></ul>
+            </form>
+            <div id="map" class="map"></div>
+            <p id="loc-preview" class="preview"></p>
+        </section>
+
+        <footer class="apply">
+            <button id="apply" class="primary big" disabled>Apply</button>
+        </footer>
+    </aside>
+</main>
+
+<div id="lightbox" class="lightbox" hidden>
+    <img id="lightbox-img" alt=""/>
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
