@@ -1,3 +1,4 @@
+import {t} from "./i18n";
 import {state, visiblePhotos, thumbURL, orientationTransform, formatExifDate, escapeHTML, type Photo} from "./state";
 
 const grid = document.getElementById("grid")!;
@@ -70,13 +71,13 @@ function createTile(p: Photo): HTMLElement {
     tile.title = p.name;
 
     const hasGPS = p.lat != null;
-    const year = p.date ? p.date.slice(0, 4) : "no date";
+    const year = p.date ? p.date.slice(0, 4) : t("grid.noDate");
     tile.innerHTML = `
         <div class="thumb"><img loading="lazy" decoding="async" alt="" style="transform:${orientationTransform(p.orientation)}" src="${escapeHTML(thumbURL(p))}"/></div>
         <div class="check">✓</div>
         <div class="meta">
-            <span class="badge ${p.date ? "" : "missing"}" title="${escapeHTML(p.date ? formatExifDate(p.date) : "No date")}">📅 ${escapeHTML(year)}</span>
-            <span class="badge ${hasGPS ? "" : "missing"}" title="${hasGPS ? `${p.lat!.toFixed(5)}, ${p.lon!.toFixed(5)}` : "No location"}">📍</span>
+            <span class="badge ${p.date ? "" : "missing"}" title="${escapeHTML(p.date ? formatExifDate(p.date) : t("grid.noDateTitle"))}">📅 ${escapeHTML(year)}</span>
+            <span class="badge ${hasGPS ? "" : "missing"}" title="${hasGPS ? `${p.lat!.toFixed(5)}, ${p.lon!.toFixed(5)}` : escapeHTML(t("grid.noLocationTitle"))}">📍</span>
         </div>
         <div class="name">${escapeHTML(p.name)}</div>`;
     return tile;

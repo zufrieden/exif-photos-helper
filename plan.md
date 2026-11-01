@@ -94,3 +94,9 @@ Implemented (steps 0–8). Requires `~/go/bin` on `PATH` for `wails3`.
 Extras added during implementation: double-click a photo for a large preview; filters "No date" / "No location";
 basket photos that already have GPS show as grey dots on the map; place search (Mapbox geocoding);
 the pin is draggable; Esc clears the basket, ⌘A selects all visible.
+
+### Language
+UI is English, or French when French is the first preferred language (system-wide or per-app in
+System Settings › General › Language & Region › Applications). Strings live in `frontend/src/i18n.ts`;
+the language comes from `[NSLocale preferredLanguages]` (`internal/locale`). Test French without
+changing settings: `bin/exif-photos-helper.app/Contents/MacOS/exif-photos-helper <folder> -AppleLanguages '(fr)'`.

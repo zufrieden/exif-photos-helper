@@ -15,6 +15,13 @@
             <string>This is a comment</string>
         <key>CFBundleShortVersionString</key>
             <string>0.1.0</string>
+        <key>CFBundleDevelopmentRegion</key>
+            <string>en</string>
+        <key>CFBundleLocalizations</key>
+            <array>
+                <string>en</string>
+                <string>fr</string>
+            </array>
         <key>CFBundleIconFile</key>
             <string>icons</string>
         <key>LSMinimumSystemVersion</key>

@@ -13,6 +13,7 @@ import (
 	"exif-photos-helper/internal/config"
 	"exif-photos-helper/internal/datesel"
 	"exif-photos-helper/internal/exif"
+	"exif-photos-helper/internal/locale"
 	"exif-photos-helper/internal/scan"
 	"exif-photos-helper/internal/thumbs"
 
@@ -80,6 +81,11 @@ func (s *PhotoService) InitialFolder() string {
 		}
 	}
 	return ""
+}
+
+// Language returns the user's preferred UI language (e.g. "fr-CH").
+func (s *PhotoService) Language() string {
+	return locale.Preferred()
 }
 
 // MapboxToken returns the Mapbox access token.

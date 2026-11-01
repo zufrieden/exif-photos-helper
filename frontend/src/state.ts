@@ -1,4 +1,5 @@
 import type {Photo} from "../bindings/exif-photos-helper/internal/exif/models";
+import {lang} from "./i18n";
 
 export type {Photo};
 export type Filter = "all" | "nodate" | "nogps";
@@ -45,16 +46,18 @@ export function orientationTransform(o: number): string {
     ][o] ?? "";
 }
 
-/** "1996:07:14 18:00:00" → "14 Jul 1996, 18:00" */
+/** "1996:07:14 18:00:00" → "14 Jul 1996, 18:00" (or "14 juil. 1996, 18:00"). */
 export function formatExifDate(d: string): string {
     const m = d.match(/^(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2})/);
     if (!m) return d;
-    const [, y, mo, da, h, mi] = m;
-    const month = MONTHS[Number(mo) - 1] ?? mo;
-    return `${Number(da)} ${month} ${y}, ${h}:${mi}`;
+    const [y, mo, da, h, mi] = m.slice(1).map(Number);
+    const date = new Date(Date.UTC(2000, mo - 1, da, h, mi));
+    date.setUTCFullYear(y); // Date.UTC maps years 0–99 to 1900–1999
+    return new Intl.DateTimeFormat(lang, {
+        day: "numeric", month: "short", year: "numeric",
+        hour: "2-digit", minute: "2-digit", timeZone: "UTC",
+    }).format(date);
 }
-
-export const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function escapeHTML(s: string): string {
     return s.replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]!));

@@ -1,6 +1,7 @@
 import type {PartialDate} from "../bindings/exif-photos-helper/internal/datesel/models";
 import {PhotoService} from "../bindings/exif-photos-helper";
-import {MONTHS, formatExifDate} from "./state";
+import {formatExifDate} from "./state";
+import {t, monthNames} from "./i18n";
 
 const crumbsEl = document.getElementById("date-crumbs")!;
 const chipsEl = document.getElementById("date-chips")!;
@@ -46,8 +47,8 @@ export function selectedDate(): PartialDate | null {
 
 function crumbLabel(level: number, v: number): string {
     switch (level) {
-        case 0: return `${v}s`;
-        case 2: return MONTHS[v - 1];
+        case 0: return t("date.decadeCrumb", {d: v});
+        case 2: return monthNames()[v - 1];
         case 4: return `${String(v).padStart(2, "0")}h`;
         default: return String(v);
     }
@@ -60,12 +61,12 @@ function options(): {value: number, label: string}[] {
         case 0:
             return range(0, (LAST_DECADE - FIRST_DECADE) / 10).map(i => {
                 const d = LAST_DECADE - i * 10;
-                return {value: d, label: `${d}s`};
+                return {value: d, label: t("date.decadeChip", {d})};
             });
         case 1:
             return range(decade, decade + 9).map(y => ({value: y, label: String(y)}));
         case 2:
-            return range(1, 12).map(m => ({value: m, label: MONTHS[m - 1]}));
+            return range(1, 12).map(m => ({value: m, label: monthNames()[m - 1]}));
         case 3:
             return range(1, new Date(year, month, 0).getDate()).map(d => ({value: d, label: String(d)}));
         case 4:
@@ -75,29 +76,29 @@ function options(): {value: number, label: string}[] {
     }
 }
 
-const LEVEL_NAMES = ["decade", "year", "month", "day", "hour"];
+const LEVEL_KEYS = ["", "date.level.year", "date.level.month", "date.level.day", "date.level.hour"] as const;
 
 function render() {
     crumbsEl.innerHTML = picked.length === 0
-        ? `<span class="crumb-placeholder">Pick a decade — stop at any level</span>`
-        : `<button class="crumb" data-level="0" title="Start over">✕</button>` +
+        ? `<span class="crumb-placeholder">${t("date.placeholder")}</span>`
+        : `<button class="crumb" data-level="0" title="${t("date.startOver")}">✕</button>` +
           picked.map((v, i) => `<button class="crumb ${i === picked.length - 1 ? "current" : ""}" data-level="${i + 1}">${crumbLabel(i, v)}</button>`).join(`<span class="sep">›</span>`);
 
     const opts = options();
     chipsEl.className = `chips level-${picked.length}`;
     chipsEl.innerHTML = opts.length
-        ? (picked.length > 0 ? `<div class="chips-label">Refine ${LEVEL_NAMES[picked.length]} (optional)</div>` : "") +
+        ? (picked.length > 0 ? `<div class="chips-label">${t("date.refine", {level: t(LEVEL_KEYS[picked.length] as Exclude<typeof LEVEL_KEYS[number], "">)})}</div>` : "") +
           opts.map(o => `<button class="chip" data-value="${o.value}">${o.label}</button>`).join("")
         : "";
 
     const d = selectedDate();
     if (!d) {
-        previewEl.textContent = "Dates won't be changed.";
+        previewEl.textContent = t("date.unchanged");
         previewEl.classList.add("muted");
         return;
     }
     previewEl.classList.remove("muted");
     PhotoService.DatePreview(d)
-        .then(s => { previewEl.textContent = `Will write ${formatExifDate(s)}  (${s})`; })
+        .then(s => { previewEl.textContent = t("date.willWrite", {date: formatExifDate(s), exif: s}); })
         .catch(err => { previewEl.textContent = String(err); });
 }

@@ -3,6 +3,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import type {LatLon} from "../bindings/exif-photos-helper/internal/exif/models";
 import type {Photo} from "./state";
 import {escapeHTML} from "./state";
+import {t, lang} from "./i18n";
 
 const previewEl = document.getElementById("loc-preview")!;
 const searchForm = document.getElementById("search") as HTMLFormElement;
@@ -24,7 +25,7 @@ export function initMapPicker(accessToken: string, changed: () => void) {
 
     if (!token) {
         document.getElementById("map")!.innerHTML =
-            `<div class="map-missing">No Mapbox token. Add MAPBOX_TOKEN to .env and rebuild.</div>`;
+            `<div class="map-missing">${escapeHTML(t("loc.noToken"))}</div>`;
         renderPreview();
         return;
     }
@@ -36,6 +37,7 @@ export function initMapPicker(accessToken: string, changed: () => void) {
         center: [8.2, 46.8],
         zoom: 5,
         attributionControl: false,
+        language: lang,
     });
     map.addControl(new mapboxgl.NavigationControl({showCompass: false}), "top-right");
     map.addControl(new mapboxgl.AttributionControl({compact: true}));
@@ -78,12 +80,12 @@ function setPosition(p: LatLon | null) {
 
 function renderPreview() {
     if (!picked) {
-        previewEl.textContent = token ? "Locations won't be changed. Click the map to set one." : "Locations won't be changed.";
+        previewEl.textContent = t(token ? "loc.unchangedClick" : "loc.unchanged");
         previewEl.classList.add("muted");
         return;
     }
     previewEl.classList.remove("muted");
-    previewEl.textContent = `Will write ${picked.lat.toFixed(6)}, ${picked.lon.toFixed(6)}`;
+    previewEl.textContent = t("loc.willWrite", {lat: picked.lat.toFixed(6), lon: picked.lon.toFixed(6)});
 }
 
 /** Shows the current positions of basket photos as grey dots. */
@@ -124,7 +126,7 @@ function initSearch() {
         }
         resultsEl.innerHTML = results.length
             ? results.map((r, i) => `<li data-i="${i}">${escapeHTML(r.name)}</li>`).join("")
-            : `<li class="muted">No results</li>`;
+            : `<li class="muted">${escapeHTML(t("loc.noResults"))}</li>`;
         resultsEl.hidden = false;
     });
 
@@ -147,9 +149,9 @@ function initSearch() {
 }
 
 async function geocode(q: string): Promise<GeoResult[]> {
-    const url = `https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(q)}&limit=6&access_token=${token}`;
+    const url = `https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(q)}&limit=6&language=${lang}&access_token=${token}`;
     const res = await fetch(url);
-    if (!res.ok) throw new Error(`Search failed (${res.status})`);
+    if (!res.ok) throw new Error(t("loc.searchFailed", {status: res.status}));
     const json = await res.json();
     return (json.features ?? []).map((f: any) => ({
         name: f.properties?.full_address || f.properties?.name || "?",

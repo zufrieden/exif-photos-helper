@@ -51,6 +51,13 @@ export function InitialFolder(): $CancellablePromise<string> {
 }
 
 /**
+ * Language returns the user's preferred UI language (e.g. "fr-CH").
+ */
+export function Language(): $CancellablePromise<string> {
+    return $Call.ByID(3937102195);
+}
+
+/**
  * MapboxToken returns the Mapbox access token.
  */
 export function MapboxToken(): $CancellablePromise<string> {
